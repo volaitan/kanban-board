@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Kanban Board</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body data-wip-limit="{{ wip_limit }}">
+  <header class="topbar">
+    <h1>Kanban Board</h1>
+    <div class="progress" aria-label="Sprint progress">
+      <div class="progress-bar"><span id="progress-fill"></span></div>
+      <span id="progress-text">0% complete</span>
+    </div>
+    <button class="btn" id="new-card-btn">+ New card</button>
+  </header>
+
+  <main class="board" id="board">
+    {% for key, label in [('backlog','Backlog'),('todo','To Do'),('in_progress','In Progress'),('done','Done')] %}
+    <section class="column" data-status="{{ key }}">
+      <header class="column-head">
+        <h2>{{ label }}</h2>
+        <span class="count" data-count-for="{{ key }}">0</span>
+      </header>
+      <div class="cards" data-status="{{ key }}"></div>
+    </section>
+    {% endfor %}
+  </main>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <dialog id="card-dialog">
+    <form method="dialog" id="card-form">
+      <h2 id="dialog-title">New card</h2>
+      <label>Title <input name="title" required maxlength="120"></label>
+      <label>Description <textarea name="description" rows="3"></textarea></label>
+      <div class="row">
+        <label>Priority
+          <select name="priority">
+            <option value="low">Low</option>
+            <option value="medium" selected>Medium</option>
+            <option value="high">High</option>
+          </select>
+        </label>
+        <label>Story points <input name="points" type="number" min="0"></label>
+      </div>
+      <div class="row">
+        <label>Assignee <input name="assignee"></label>
+        <label>Due date <input name="due_date" type="date"></label>
+      </div>
+      <p class="form-error" id="form-error"></p>
+      <div class="dialog-actions">
+        <button type="button" class="btn btn-danger" id="delete-btn" hidden>Delete</button>
+        <span class="spacer"></span>
+        <button type="button" class="btn btn-ghost" id="cancel-btn">Cancel</button>
+        <button type="submit" class="btn">Save</button>
+      </div>
+    </form>
+  </dialog>
+
+  <script src="{{ url_for('static', filename='app.js') }}"></script>
+</body>
+</html>
